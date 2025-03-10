@@ -21,17 +21,23 @@ Academic Organizer Desktop is an Electron + React application for university stu
 3. Refactored Dashboard page with custom hooks and smaller components
 4. Refactored Courses page following the established pattern
 5. Implemented index files for simplified component imports
+6. Configured Git LFS for handling large binary files (e.g., build artifacts)
+7. Refactored Assignments page components with Material-UI and custom hooks
+8. Implemented drag-and-drop assignment prioritization using @dnd-kit/sortable
+9. Added assignment templates system for recurring assignment types
 
 ## In Progress
 - Maintaining component and hook documentation
 - Ensuring consistent error handling across the application
+- Implementing assignment completion tracking
 
 ## Upcoming Tasks
-1. Refactor Assignments page components
-2. Evaluate global state management needs
-3. Add comprehensive test coverage
-4. Implement file upload functionality
-5. Enhance data visualization for assignment completion
+1. Evaluate global state management needs
+2. Add comprehensive test coverage
+3. Implement file upload functionality
+4. Enhance data visualization for assignment completion
+5. Add course-assignment relationships
+6. Develop backup/restore functionality
 
 ## Code Standards
 - **Component Structure**: Single responsibility, props documentation
@@ -45,43 +51,53 @@ Academic Organizer Desktop is an Electron + React application for university stu
 ### Core Architecture
 
 #### Component Hierarchy
-
 ```text
 Assignments.jsx (Container)
-├─ AssignmentList.jsx
+├─ AssignmentsHeader.jsx
+├─ AssignmentList.jsx (with Drag-and-Drop)
+├─ AssignmentDetail.jsx
 ├─ AssignmentForm.jsx (With Validation)
-└─ AssignmentDetail.jsx
+├─ DeleteAssignmentDialog.jsx
+├─ AssignmentTemplateList.jsx
+└─ AssignmentTemplateDialog.jsx
 ```
 
 #### Data Flow
-
 ```mermaid
 flowchart LR
-  A[useAssignmentData] --> B[Assignments]
+  A[useAssignmentsList] --> B[Assignments]
   B --> C[AssignmentList]
-  B --> D[AssignmentForm]
-  D --> E[(SQLite Database)]
+  D[useAssignmentDialog] --> B
+  E[useAssignmentsDeleteDialog] --> B
+  F[useAssignmentPriority] --> C
+  G[useAssignmentTemplates] --> B
+  B --> H[AssignmentForm]
+  B --> I[AssignmentTemplateDialog]
+  H --> J[(SQLite Database)]
+  I --> J
 ```
 
 ### Validation Implementation
-
 ```javascript
-// useAssignmentForm.js - Core validation logic
-export const validateField = (name, value) => {
+// AssignmentForm.jsx - Core validation logic
+const validateField = (name, value) => {
   switch (name) {
     case 'title':
-      return value.trim() ? '' : 'Title required';
+      return value.trim() ? '' : 'Title is required';
     case 'due_date':
-      if (!value) return 'Date required';
-      return new Date(value) >= new Date() ? '' : 'Date must be future';
+      if (!value) {
+        return 'Due date is required';
+      } else if (new Date(value) < new Date()) {
+        return 'Due date cannot be in the past';
+      }
+      return '';
     default:
       return '';
   }
 };
 ```
 
-### Database Schema v1.3
-
+### Database Schema v1.4
 ```sql
 CREATE TABLE IF NOT EXISTS assignments (
   id INTEGER PRIMARY KEY,
@@ -89,12 +105,24 @@ CREATE TABLE IF NOT EXISTS assignments (
   description TEXT,
   due_date DATE NOT NULL,
   status TEXT NOT NULL DEFAULT 'Pending',
+  course_id INTEGER,
+  priority INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  created_from_template INTEGER,
+  FOREIGN KEY (course_id) REFERENCES courses(id),
+  FOREIGN KEY (created_from_template) REFERENCES assignment_templates(id)
+);
+
+CREATE TABLE IF NOT EXISTS assignment_templates (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT,
+  defaults TEXT NOT NULL, -- JSON string of default values
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
 ### Execution Workflow
-
 ```bash
 # Personal Build Commands
 npm start          # Dev mode with hot-reload
@@ -103,7 +131,6 @@ npm run package    # Create portable executable
 ```
 
 ## Personal Runtime Configuration
-
 - **Data Storage**: `%APPDATA%/AcademicOrganizer/data.sqlite`
 - **Log Location**: `~/academic_organizer/logs/`
 - **Security Settings**:
@@ -113,7 +140,8 @@ npm run package    # Create portable executable
 
 ## Database Schema
 - **courses**: id, name, code, instructor, start_date, end_date, description, color
-- **assignments**: id, course_id, title, description, due_date, status, priority
+- **assignments**: id, course_id, title, description, due_date, status, priority, created_from_template
+- **assignment_templates**: id, name, description, defaults
 - **files**: id, course_id, name, path, size, upload_date
 - **notes**: id, course_id, title, content, created_at, updated_at
 
@@ -123,6 +151,8 @@ npm run package    # Create portable executable
 - Material-UI
 - SQLite
 - React Router
+- Date-fns
+- @dnd-kit/sortable (for drag-and-drop functionality)
 
 ## Development Workflow
 1. Plan component/feature changes
@@ -130,8 +160,14 @@ npm run package    # Create portable executable
 3. Test functionality across the application
 4. Document changes and update this context file
 
-## Next Priority Tasks
+## Repository Management
+- **Git LFS**: Configured for tracking large binary files (*.exe, *.asar)
+- **Ignored Files**: Build artifacts and node_modules are excluded via .gitignore
+- **Versioning**: Main development branch is 'main'
+- **Clone Requirements**: Team members must have Git LFS installed (`git lfs install`)
+- **Post-Clone**: Run `git lfs pull` to fetch binary files after initial clone
 
+## Next Priority Tasks
 1. Implement assignment completion tracking
 2. Add course-assignment relationships
 3. Develop backup/restore functionality
