@@ -1,0 +1,78 @@
+{
+  "name": "academic-organizer-desktop",
+  "version": "1.0.0",
+  "description": "A desktop application for university students to manage their courses, assignments, and academic materials",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "build": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "academic",
+    "organizer",
+    "desktop",
+    "electron",
+    "education"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "build": {
+    "appId": "com.academicorganizer.desktop",
+    "productName": "Academic Organizer Desktop",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icons/icon.ico",
+      "publisherName": "Academic Organizer",
+      "fileAssociations": [
+        {
+          "ext": "aorg",
+          "name": "Academic Organizer Project",
+          "role": "Editor"
+        }
+      ],
+      "signingHashAlgorithms": null,
+      "signDlls": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "assets/icons/installer.ico",
+      "uninstallerIcon": "assets/icons/uninstaller.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    }
+  },
+  "devDependencies": {
+    "electron": "^35.0.1",
+    "electron-builder": "^25.1.8",
+    "electron-rebuild": "^3.2.9"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.4.7",
+    "better-sqlite3": "^11.8.1",
+    "electron-store": "^10.0.1",
+    "pdf-parse": "^1.1.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.3.0",
+    "sqlite3": "^5.1.7"
+  }
+}

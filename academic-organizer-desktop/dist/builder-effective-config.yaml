@@ -1,0 +1,26 @@
+directories:
+  output: dist
+  buildResources: build
+appId: com.academicorganizer.desktop
+productName: Academic Organizer Desktop
+win:
+  target: nsis
+  icon: assets/icons/icon.ico
+  publisherName: Academic Organizer
+  fileAssociations:
+    - ext: aorg
+      name: Academic Organizer Project
+      role: Editor
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: assets/icons/installer.ico
+  uninstallerIcon: assets/icons/uninstaller.ico
+mac:
+  target:
+    - dmg
+linux:
+  target:
+    - AppImage
+files: []
+electronVersion: 35.0.1
