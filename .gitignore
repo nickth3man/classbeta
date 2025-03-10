@@ -35,3 +35,12 @@ Desktop.ini
 .vscode/
 *.swp
 *.swo
+
+# Project-specific files and directories
+.windsurfrules
+context.md
+development-context.md
+scratchpad.md
+portable-devin/
+.mypy_cache/
+.venv/
