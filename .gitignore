@@ -44,3 +44,4 @@ scratchpad.md
 portable-devin/
 .mypy_cache/
 .venv/
+.env
