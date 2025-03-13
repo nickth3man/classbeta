@@ -5,3 +5,4 @@ export { default as AssignmentsHeader } from './AssignmentsHeader';
 export { default as DeleteAssignmentDialog } from './DeleteAssignmentDialog';
 export { default as AssignmentTemplateList } from './AssignmentTemplateList';
 export { default as AssignmentTemplateDialog } from './AssignmentTemplateDialog';
+export { default as AssignmentsContainer } from './AssignmentsContainer';
